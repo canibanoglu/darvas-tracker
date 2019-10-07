@@ -37,7 +37,7 @@ db.serialize(() => {
             hourlyData TEXT
         )`)
 
-        //promises.push(populateStockValues(x));
+        promises.push(populateStockValues(x));
     });
 
     Promise.all(promises).then(() => {

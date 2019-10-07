@@ -6,8 +6,6 @@ const { normalizeMynetResponse, formatDate } = require('./utils');
 
 const db = new sqlite3.Database('bist30Prics.db');
 
-const prices = {};
-
 db.serialize(() => {
     const today = new Date().getDay();
     if (today === 0 || today === 6) return;
