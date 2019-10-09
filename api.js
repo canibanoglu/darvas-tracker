@@ -27,7 +27,7 @@ router.get('/', (req, res, next) => {
         
         const db = new sqlite3.Database('bist30Prics.db');
         db.serialize(() => {
-            db.all(`SELECT * FROM ${ticker} WHERE ${ticker}.date > ?`, [startDate], (err, rows) => {
+            db.all(`SELECT * FROM ${ticker} WHERE ${ticker}.date >= ?`, [startDate], (err, rows) => {
                 console.log(err);
                 
                 res.json({ data: rows });
