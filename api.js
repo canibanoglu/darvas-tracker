@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
+const { formatDate } = require('./utils');
 
 const app = express();
 app.use((req, res, next) => {
@@ -15,13 +16,20 @@ const router = express.Router();
 
 router.get('/', (req, res, next) => {
     try {
-        const { ticker,  } = req.query;
+        const { ticker, date } = req.query;
 
         if (!ticker) throw new Error('No ticker supplied');
+
+        let d = new Date();
+        d.setDate(d.getDate() - 30);
+
+        const startDate = date ? date : formatDate(d);
         
         const db = new sqlite3.Database('bist30Prics.db');
         db.serialize(() => {
-            db.all(`SELECT * FROM ${ticker} ORDER BY date DESC LIMIT 20`, (err, rows) => {
+            db.all(`SELECT * FROM ${ticker} WHERE ${ticker}.date > ?`, [startDate], (err, rows) => {
+                console.log(err);
+                
                 res.json({ data: rows });
                 db.close();
             })

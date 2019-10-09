@@ -50,7 +50,7 @@ db.serialize(() => {
     
                         
                     const stmt = db.prepare(`INSERT INTO ${name} VALUES (?, ?, ?, ?)`);
-                    stmt.run(new Date().setHours(2, 0, 0, 0), lastPrice, volumeLots, volumeTL);
+                    stmt.run(formatDate(new Date()), lastPrice, volumeLots, volumeTL);
                     stmt.finalize();
                 })
     
