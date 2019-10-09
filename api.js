@@ -21,7 +21,7 @@ router.get('/', (req, res, next) => {
         
         const db = new sqlite3.Database('bist30Prics.db');
         db.serialize(() => {
-            db.all(`SELECT * FROM ${ticker} ORDER BY date LIMIT 20`, (err, rows) => {
+            db.all(`SELECT * FROM ${ticker} ORDER BY date DESC LIMIT 20`, (err, rows) => {
                 res.json({ data: rows });
                 db.close();
             })
