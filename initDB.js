@@ -6,8 +6,9 @@ const { formatDate } = require('./utils');
 const db = new sqlite3.Database('bist30Prics.db');
 
 function populateStockValues(name) {
-    const URL = `http://finans.mynet.com/borsa/ajaxcharts/?type=stock&ticker=${name}&range=3m`;
+    const URL = `http://finans.mynet.com/borsa/ajaxcharts/?type=stock&ticker=${name}&range=10y`;
     return axios.get(URL).then(response => {
+        console.log(`adding data for ${name}`);
         const stmt = db.prepare(`INSERT INTO ${name} VALUES (?, ?, ?, ?)`);
         const volumeData = response.data.Data.Tooltips['Hacim'];
         response.data.Data.ohlc.forEach(value => {
@@ -15,7 +16,11 @@ function populateStockValues(name) {
             const price = value[1];
             const volume = volumeData[timestamp];
             const date = formatDate(new Date(timestamp));
-            stmt.run(date, price, volume / price, volume);
+            stmt.run([date, price, volume / price, volume], (err, rows) => {
+                if (err) {
+                    console.log(err);
+                }
+            });
     
         });
         stmt.finalize();
@@ -41,6 +46,9 @@ db.serialize(() => {
     });
 
     Promise.all(promises).then(() => {
+        db.close();
+    }).catch(err => {
+        console.log(err);
         db.close();
     })
 });
